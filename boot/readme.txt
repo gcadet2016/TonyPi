@@ -1,0 +1,1 @@
+Ce dossier se trouve à la racine du système de fichiers TonyPi: /boot
