@@ -45,7 +45,7 @@ class MJPG_Handler(BaseHTTPRequestHandler):
                         self.wfile.write('--boundarydonotcross\r\n'.encode())
                         self.end_headers()
                         self.wfile.write(jpg_bytes)
-                    time.sleep(0.03)
+                    time.sleep(0.05)
                 except Exception as e:
                     print("error2", e)
                     break
