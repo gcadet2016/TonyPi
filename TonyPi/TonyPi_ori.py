@@ -16,12 +16,12 @@ import hiwonder.yaml_handle as yaml_handle
 
 import Functions.Running as Running
 
-# The main thread is already set to start in the background upon boot
-# The autostart method is systemd, with the autostart file located at /etc/systemd/system/tonypi.service
-# sudo systemctl stop tonypi  (closing this time)
-# sudo systemctl disable tonypi (permanently close)
-# sudo systemctl enable tonypi (permanently open)
-# sudo systemctl start tonypi (open this time)
+# 主线程，已经以后台的形式开机自启(the main thread is already set to start in the background upon boot)
+# 自启方式systemd，自启文件/etc/systemd/system/tonypi.service(the autostart method is systemd, with the autostart file located at /etc/systemd/system/tonypi.service)
+# sudo systemctl stop tonypi  此次关闭(closing this time)
+# sudo systemctl disable tonypi 永久关闭(permanently close)
+# sudo systemctl enable tonypi 永久开启(permanently open)
+# sudo systemctl start tonypi 此次开启(open this time)
 
 if sys.version_info.major == 2:
     print('Please run this program with python3!')
@@ -34,13 +34,13 @@ def startTonyPi():
     RPCServer.QUEUE = QUEUE_RPC
 
     threading.Thread(target=RPCServer.startRPCServer,
-                     daemon=True).start()  # rpc server
+                     daemon=True).start()  # rpc服务器(rpc server)
     threading.Thread(target=MjpgServer.startMjpgServer,
-                     daemon=True).start()  # mjpg stream server
+                     daemon=True).start()  # mjpg流服务器(mjpg stream server)
     
     
     loading_picture = cv2.imread('/home/pi/TonyPi/Functions/loading.jpg')
-    cam = Camera.Camera()  
+    cam = Camera.Camera()  # 相机读取(camera reading)
     open_once = yaml_handle.get_yaml_data('/boot/camera_setting.yaml')['open_once']
     if open_once:
         cam.camera_open()
@@ -51,31 +51,26 @@ def startTonyPi():
 
     while True:
         time.sleep(0.03)
-        # execute RPC commands that need to be executed in this thread
-        # RPC command has been enqueued by RPCSever.py
+        # 执行需要在本线程中执行的RPC命令(execute RPC commands that need to be executed in this thread)
         while True:
             try:
-                req, ret = QUEUE_RPC.get(False) # req = proc name to run (PC command),  
-                                                # ret = (event, parameters, result)
-                                                # arg:False -> raise the Empty exception if QUEUE is empty
-                event, params, *_ = ret     # *_ = et tout le reste - The preferred way to discard values is to use an underscore variable (_)
-                ret[2] = req(params)        # execute RPC command
+                req, ret = QUEUE_RPC.get(False)
+                event, params, *_ = ret
+                ret[2] = req(params)  # 执行RPC命令(execute RPC command)
                 event.set()
             except:
-                break   # Exit when QUEUE is empty
+                break
         #####
-        # perform function program
+        # 执行功能玩法程序：(perform function program)
         try:
             if Running.RunningFunc > 0 and Running.RunningFunc <= 12:
                 if cam.frame is not None:
-                    # Une frame fournie par la caméra --> lancer la function de traitement 
-                    img = Running.CurrentEXE().run(cam.frame.copy())    # Invoke run(img) of the current running function
+                    img = Running.CurrentEXE().run(cam.frame.copy())
                     if Running.RunningFunc == 9:
                         MjpgServer.img_show = np.vstack((img, cam.frame))
                     else:
                         MjpgServer.img_show = img
                 else:
-                    # pas d'image de caméra
                     MjpgServer.img_show = loading_picture
             else:
                 if open_once:

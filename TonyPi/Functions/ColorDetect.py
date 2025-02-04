@@ -288,8 +288,8 @@ if __name__ == '__main__':
         if ret:
             frame = img.copy()
             frame = cv2.remap(frame, mapx, mapy, cv2.INTER_LINEAR)  # 鐣稿彉鐭
-            Frame = run(frame)
-            cv2.imshow('Frame', Frame)
+#            Frame = run(frame)
+            cv2.imshow('Frame', frame)
             key = cv2.waitKey(1)
             if key == 27:
                 break

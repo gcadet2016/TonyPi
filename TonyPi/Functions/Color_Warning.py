@@ -1,5 +1,9 @@
-#!/usr/bin/python3
+# Color_warning.py
+# V1.0
+#
+# #!/usr/bin/python3
 # coding=utf8
+
 import sys
 import os
 import cv2
@@ -24,8 +28,8 @@ range_rgb = {
     'white': (255, 255, 255),
 }
 
-# 找出面积最大的轮廓(find out the contour with the maximal area)
-# 参数为要比较的轮廓的列表(parameter is the list to be compared)
+# find out the contour with the maximal area)
+# parameter is the list to be compared)
 def getAreaMaxContour(contours):
     contour_area_temp = 0
     contour_area_max = 0
